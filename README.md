@@ -36,8 +36,12 @@ The difficulty here stems from shifts being able to span more than one day (e.g 
 We need to ensure only the time spend inside the week boundaries counts towards the 40 hours max.
 See image:
 
+![max hours](https://user-images.githubusercontent.com/419903/40587137-8458391e-61cb-11e8-809e-31d89a919049.png)
+
 ### No more than one employee per shift
 
 We need to ensure there is no overlap in the shifts
 
 See image:
+
+![overlap](https://user-images.githubusercontent.com/419903/40587163-c35cb504-61cb-11e8-95cd-2e973c431340.png)
