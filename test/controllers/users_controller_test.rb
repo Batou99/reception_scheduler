@@ -26,32 +26,32 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
   # CONTEXT: non authenticated user ##############################
   test "index: unauthenticated" do
-    get "/users", as: :json
+    get users_path, as: :json
 
     assert_equal 401, response.status
   end
 
   test "current: unauthenticated" do
-    get "/users/current", as: :json
+    get users_current_path, as: :json
 
     assert_equal 401, response.status
   end
 
   test "create: unauthenticated" do
-    post "/users", as: :json, params: @create_params
+    post users_path, as: :json, params: @create_params
 
     assert_equal 401, response.status
   end
 
   test "destroy: unauthenticated" do
-    delete "/users/#{@user.id}"
+    delete user_path(@user)
 
     assert_equal 401, response.status
   end
 
   # CONTEXT: authenticated user ##############################
   test "index: authenticated" do
-    get "/users", as: :json, headers: authenticated_header(@user)
+    get users_path, as: :json, headers: authenticated_header(@user)
 
     res = JSON.parse response.body, symbolize_names: true
 
@@ -60,7 +60,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "current: authenticated" do
-    get "/users/current", as: :json, headers: authenticated_header(@user)
+    get users_current_path, as: :json, headers: authenticated_header(@user)
 
     res             = JSON.parse response.body,                            symbolize_names: true
     serialized_user = JSON.parse UserSerializer.new(@user.reload).to_json, symbolize_names: true
@@ -70,7 +70,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
   # CONTEXT: create ############################################
   test "create: admin user" do
-    post "/users", as: :json, params: @create_params, headers: authenticated_header(@admin)
+    post users_path, as: :json, params: @create_params, headers: authenticated_header(@admin)
 
     user_params = @create_params[:user]
     new_user    = User.last
@@ -82,14 +82,14 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create: normal user" do
-    post "/users", as: :json, params: @create_params
+    post users_path, as: :json, params: @create_params
 
     assert_equal 401, response.status
   end
   
   # CONTEXT: update ############################################
   test "update: admin" do
-    patch "/users/#{@user.id}", as: :json, params: @update_params, headers: authenticated_header(@admin)
+    patch user_path(@user), as: :json, params: @update_params, headers: authenticated_header(@admin)
 
     assert_equal 200, response.status
     @user.reload
@@ -117,7 +117,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "update: non admin" do
-    patch "/users/#{@admin.id}", as: :json, params: @update_params, headers: authenticated_header(@user)
+    patch user_path(@admin), as: :json, params: @update_params, headers: authenticated_header(@user)
 
     assert_equal 401, response.status
   end

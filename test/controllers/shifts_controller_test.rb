@@ -22,31 +22,31 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
 
   # CONTEXT: non authenticated user ##############################
   test "index: unauthenticated" do
-    get "/shifts", as: :json
+    get shifts_path, as: :json
 
     assert_equal 401, response.status
   end
 
   test "show: unauthenticated" do
-    get "/shifts/#{@shift.id}", as: :json
+    get shift_path(@shift), as: :json
 
     assert_equal 401, response.status
   end
 
   test "create: unauthenticated" do
-    post "/shifts", as: :json, params: @create_params
+    post shifts_path, as: :json, params: @create_params
 
     assert_equal 401, response.status
   end
 
   test "update: unauthenticated" do
-    patch "/shifts/#{@shift.id}", as: :json, params: @update_params
+    patch shift_path(@shift), as: :json, params: @update_params
 
     assert_equal 401, response.status
   end
 
   test "destroy: unauthenticated" do
-    delete "/shifts/#{@shift.id}", as: :json
+    delete shift_path(@shift), as: :json
 
     assert_equal 401, response.status
   end
@@ -54,7 +54,7 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
 
   # CONTEXT: authenticated user #################################
   test "index: authenticated" do
-    get "/shifts", as: :json, headers: authenticated_header(@user)
+    get shifts_path, as: :json, headers: authenticated_header(@user)
 
     res              = JSON.parse response.body,                       symbolize_names: true
     serialized_shift = JSON.parse ShiftSerializer.new(@shift).to_json, symbolize_names: true
@@ -64,7 +64,7 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show: authenticated" do
-    get "/shifts/#{@shift.id}", as: :json, headers: authenticated_header(@user)
+    get shift_path(@shift), as: :json, headers: authenticated_header(@user)
 
     res              = JSON.parse response.body,                       symbolize_names: true
     serialized_shift = JSON.parse ShiftSerializer.new(@shift).to_json, symbolize_names: true
@@ -74,7 +74,7 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create: authenticated" do
-    post "/shifts", as: :json, params: @create_params, headers: authenticated_header(@user)
+    post shifts_path(@shift), as: :json, params: @create_params, headers: authenticated_header(@user)
 
     res = JSON.parse response.body, symbolize_names: true
 
@@ -85,7 +85,7 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
 
   test "create: cannot create shift for another user" do
     params = @create_params.merge(user_id: @admin.id)
-    post "/shifts", as: :json, params: params, headers: authenticated_header(@user)
+    post shifts_path, as: :json, params: params, headers: authenticated_header(@user)
 
     res = JSON.parse response.body, symbolize_names: true
 
@@ -95,7 +95,7 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create: displays create errors" do
-    post "/shifts", as: :json, params: { shift: { start: @base } }, headers: authenticated_header(@user)
+    post shifts_path, as: :json, params: { shift: { start: @base } }, headers: authenticated_header(@user)
 
     res = JSON.parse response.body, symbolize_names: true
 
@@ -104,7 +104,7 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "update: authenticated" do
-    patch "/shifts/#{@shift.id}", as: :json, params: @update_params, headers: authenticated_header(@user)
+    patch shift_path(@shift), as: :json, params: @update_params, headers: authenticated_header(@user)
 
     res = JSON.parse response.body,                                           symbolize_names: true
     serialized_shift = JSON.parse ShiftSerializer.new(@shift.reload).to_json, symbolize_names: true
@@ -115,7 +115,7 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
 
   test "update: displays create errors" do
     invalid_params = { shift: { start: @base + 7.hours} }
-    patch "/shifts/#{@shift.id}", as: :json, params: invalid_params, headers: authenticated_header(@user)
+    patch shift_path(@shift), as: :json, params: invalid_params, headers: authenticated_header(@user)
 
     res = JSON.parse response.body, symbolize_names: true
 
@@ -124,7 +124,7 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "destroy: authenticated, own shift" do
-    delete "/shifts/#{@shift.id}", as: :json, headers: authenticated_header(@user)
+    delete shift_path(@shift), as: :json, headers: authenticated_header(@user)
 
     res = JSON.parse response.body, symbolize_names: true
 
@@ -135,13 +135,13 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
   test "destroy: some other user (by non admin)" do
     other  = User.create(username: "other",  email: "other@foo.com",  admin: false, password: "testpass")
 
-    delete "/shifts/#{@shift.id}", as: :json, headers: authenticated_header(other)
+    delete shift_path(@shift), as: :json, headers: authenticated_header(other)
 
     assert_equal 401, response.status
   end
 
   test "destroy: authenticated, as admin" do
-    delete "/shifts/#{@shift.id}", as: :json, headers: authenticated_header(@admin)
+    delete shift_path(@shift), as: :json, headers: authenticated_header(@admin)
 
     res = JSON.parse response.body, symbolize_names: true
 
