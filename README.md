@@ -70,6 +70,8 @@ This project creates an API to serve the requested functionality.
 To secure the connection uses JWT tokens.
 ![max hours](https://user-images.githubusercontent.com/419903/40587226-9d180d3e-61cc-11e8-82b5-e6bf3cd02824.png)
 
+See [Test drive](#test-drive)
+
 ### Shifts implementation
 The implementation is quite straighforward but there are a couple of edge cases worthy of note.
 
