@@ -17,11 +17,19 @@ class User < ApplicationRecord
     admin || id.to_s == user_id.to_s
   end
 
-  def number_of_hours(datetime)
+  def can_modify_shift?(shift_id)
+    shift = Shift.find shift_id
+    admin || shift.user_id == id
+  end
+
+  # NOTE: We want to exclude a shift when we update it or it would count twice towards totals
+  def number_of_hours(datetime, exclude_shift = nil)
     week_start = datetime.beginning_of_week
     week_end   = datetime.end_of_week
 
-    shifts.where("start <= ? AND finish >= ?", week_end, week_start).sum do |shift|
+    base = exclude_shift ? shifts.where("id != ?", exclude_shift.id) : shifts
+
+    base.where("start <= ? AND finish >= ?", week_end, week_start).sum do |shift|
       # Intersect the shift with the week boundaries
       in_week_start  = [week_start, shift.start].max
       in_week_finish = [week_end,   shift.finish].min

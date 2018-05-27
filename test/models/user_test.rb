@@ -28,16 +28,34 @@ class UserTest < ActiveSupport::TestCase
   test "non admin user cannot modify other users" do
     user2 = User.create(username: "user2", email: "user@foo.com", admin: false, password: "testpass")
 
-    refute @user.can_modify_user? @admin1.id
+    refute @user.can_modify_user? @admin.id
     refute @user.can_modify_user? user2.id
   end
 
   test "admin can modify any other user" do
     admin2 = User.create(username: "admin2", email: "admin@foo.com", admin: true, password: "testpass")
 
-    assert @admin1.can_modify_user? @admin1.id
-    assert @admin1.can_modify_user? admin2.id
-    assert @admin1.can_modify_user? @user.id
+    assert @admin.can_modify_user? @admin.id
+    assert @admin.can_modify_user? admin2.id
+    assert @admin.can_modify_user? @user.id
+  end
+
+  test "user can modify his shifts" do
+    shift = Shift.last
+    assert @user.can_modify_shift?(shift.id)
+  end
+
+  test "user cannot modify other user shifts" do
+    other = User.create(username: "other",  email: "other@foo.com",  admin: false, password: "testpass")
+    shift = Shift.last
+
+    refute other.can_modify_shift?(shift.id)
+  end
+
+  test "admin can modify any shift" do
+    shift = Shift.last
+
+    assert @admin.can_modify_shift?(shift.id)
   end
 
   test "#number_of_hours" do
@@ -48,5 +66,8 @@ class UserTest < ActiveSupport::TestCase
 
     # 2 hours into the next week
     assert_equal 3, @user.number_of_hours(@next_monday)
+
+    # It can exclude a shift
+    assert_equal 0, @user.number_of_hours(@next_monday, Shift.last)
   end
 end

@@ -1,12 +1,6 @@
 require "test_helper"
 
 class UsersControllerTest < ActionDispatch::IntegrationTest
-
-  def authenticated_header(user)
-    token = Knock::AuthToken.new(payload: { sub: user.id }).token
-    { 'Authorization': "Bearer #{token}" }
-  end
-
   setup do
     @user          = User.create(username: "user1",  email: "user@foo.com",  admin: false, password: "testpass")
     @admin         = User.create(username: "admin1", email: "admin@foo.com", admin: true,  password: "testpass")
@@ -67,7 +61,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "current: authenticated" do
     get "/users/current", as: :json, headers: authenticated_header(@user)
 
-    res             = JSON.parse response.body, symbolize_names: true
+    res             = JSON.parse response.body,                            symbolize_names: true
     serialized_user = JSON.parse UserSerializer.new(@user.reload).to_json, symbolize_names: true
 
     assert_equal(serialized_user, res)

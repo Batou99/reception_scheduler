@@ -3,6 +3,7 @@
 class Shift < ApplicationRecord
   belongs_to :user
 
+  validates_presence_of :start, :finish, :user_id
   validate :no_more_than_40_hours_a_week
   validate :no_more_than_8_hours_per_shift
   validate :no_overlapping_shifts
@@ -13,39 +14,53 @@ class Shift < ApplicationRecord
 
   # VALIDATIONS #####################################################################
   def start_end_order
+    return unless start  && finish
+
     if finish <= start
       errors.add(:base, "a shift has to finish after it starts")
     end
   end
 
   def house_is_open
+    return unless start && finish
+
     errors.add(:start,  "house is closed at that time") if is_closed_at?(start)
     errors.add(:finish, "house is closed at that time") if is_closed_at?(finish)
   end
 
   def no_more_than_8_hours_per_shift
+    return unless start && finish
+
     if (finish - start)/3600 > 8
       errors.add(:base, "shift is too long, you cannot work more than 8 hours per shift")
     end
   end
 
   def no_overlapping_shifts
-    if Shift.where("start < ? AND finish > ?", finish, start).count > 0
+    return unless start && finish
+
+    base_scope = id ? Shift.where("id != ?", id) : Shift
+
+    if base_scope.where("start < ? AND finish > ?", finish, start).count > 0
       errors.add(:base, "there can not be overlapping shifts")
     end
   end
 
   def no_more_than_40_hours_a_week
-    msg = "you cannot work more than 40 hours a week"
+    return unless start && finish
+
+    msg      = "you cannot work more than 40 hours a week"
+    excluded = id ? self : nil
+
     if overlapping_weeks?
       start_week_duration = (start.end_of_week - start)/3600
       finish_week_duration = (finish.beginning_of_week - finish)/3600
 
-      errors.add(:base, msg) if user.number_of_hours(start) + start_week_duration > 40
-      errors.add(:base, msg) if user.number_of_hours(finish) + finish_week_duration > 40
+      errors.add(:base, msg) if user.number_of_hours(start, excluded) + start_week_duration > 40
+      errors.add(:base, msg) if user.number_of_hours(finish, excluded) + finish_week_duration > 40
     else
       duration = (finish - start)/3600
-      errors.add(:base, msg) if user.number_of_hours(start) + duration > 40
+      errors.add(:base, msg) if user.number_of_hours(start, excluded) + duration > 40
     end
   end
   ###################################################################################
@@ -59,6 +74,7 @@ class Shift < ApplicationRecord
   end
 
   def date_to_week_number(datetime)
+    return nil if datetime.nil?
     datetime.strftime("%W").to_i
   end
 

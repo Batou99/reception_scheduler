@@ -58,7 +58,7 @@ class ShiftTest < ActiveSupport::TestCase
   test "no overlapping shifts" do
     user2 = User.create(username: "user2",  email: "user2@foo.com",  admin: false, password: "testpass")
 
-    Shift.create(user: @user, start: @base + 7.hour, finish: @base + 15.hour)
+    old_shift = Shift.create(user: @user, start: @base + 7.hour, finish: @base + 15.hour)
 
     # No overlapping shifts with yourself
     shift = Shift.new(user: @user, start: @base + 15.hour - 1.second, finish: @base + 16.hour)
@@ -69,6 +69,10 @@ class ShiftTest < ActiveSupport::TestCase
     shift = Shift.new(user: user2, start: @base + 15.hour - 1.second, finish: @base + 16.hour)
     assert shift.invalid?
     assert shift.errors.added? :base, "there can not be overlapping shifts"
+
+    # Does not take into acount own shift
+    old_shift.assign_attributes(start: @base + 8.hours)
+    assert old_shift.valid?
   end
 
   test "no more than 40 hours a week" do
@@ -84,7 +88,7 @@ class ShiftTest < ActiveSupport::TestCase
     end
 
     # This shift has 5 hours on current week and 3 hour into the next
-    Shift.create(user_id: @user.id, start: next_monday - 5.hour, finish: next_monday + 3.hour)
+    old_shift = Shift.create(user_id: @user.id, start: next_monday - 5.hour, finish: next_monday + 3.hour)
 
     # Prev week: 5 hours
     # This week: 40 hours
@@ -103,5 +107,9 @@ class ShiftTest < ActiveSupport::TestCase
     prev_monday = @base.next_occurring(:monday)
     shift = Shift.new(user_id: @user.id, start: next_monday + 1.day, finish: next_monday + 1.day + 1.hour)
     assert shift.valid?
+
+    # Does not take into acount own shift
+    old_shift.assign_attributes(start: next_monday - 4.hours)
+    assert old_shift.valid?
   end
 end
