@@ -1,12 +1,11 @@
 Rails.application.routes.draw do
-  root "shifts#index"
+  scope path: "/v1/api" do
+    # User routes
+    resources :users, except: [:show]
+    get  "users/current" => "users#current"
+    post "users/token"   => "user_token#create"
 
-  get "auth" => "shifts#auth"
-
-  post "user_token" => "user_token#create"
-
-  resources :users, except: [:show]
-  resources :shifts
-
-  get "users/current" => "users#current"
+    # Shift routes
+    resources :shifts
+  end
 end

@@ -103,7 +103,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "update: self" do
-    patch "/users/#{@user.id}", as: :json, params: @update_params, headers: authenticated_header(@user)
+    patch user_path(@user), as: :json, params: @update_params, headers: authenticated_header(@user)
 
     assert_equal 200, response.status
     @user.reload
