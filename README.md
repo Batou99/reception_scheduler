@@ -13,9 +13,30 @@ This project just uses sqlite as DB so there's no need to install a database ser
 * Install rails 5.2
 * Create and seed DB: `rake db:setup`
 
+### Seed data
+
+There are 2 users 
+1. admin
+  - username: admin
+  - email: admin@foo.com
+  - password: somepass
+2. user
+  - username: user
+  - email: user@foo.com
+  - password: somepass
+
+And there are 6 shifts created for user `user` that total
+1. 7 hours on the week before `1/1/2018`
+2. 40 hours on the week of `1/1/2018`
+3. 1 hour on the week of `7/1/2018`
+
 ## Tests
 
 To run the test suite just do: `rails test`
+
+## Run application
+
+Just `rails s`
 
 ## Rules
 - Shoreditch House is open from 7am until 3am, 7 days a week
@@ -23,7 +44,26 @@ To run the test suite just do: `rails test`
 - Shifts can be a maximum of 8 hours long
 - An employee can work a maximum of 40 hours per week
 
-## Description
+## Extra rules
+This has been added because I thought they would offer a better experience
+
+### User roles
+A user can be a normal `user` or an `admin`. 
+
+#### A user 
+
+1. Can only update/delete its own shifts.
+2. Cannot create new users
+3. Cannot modify his `admin` status
+4. Can modify his username and email
+
+#### An admin
+
+1. Can update/delete any other users shifts
+2. Can create new users (including admins)
+3. Can update other users (but not admin status)
+
+## Notes
 
 This project creates an API to serve the requested functionality.
 To secure the connection uses JWT tokens.
@@ -46,3 +86,15 @@ We need to ensure there is no overlap in the shifts
 See image:
 
 ![overlap](https://user-images.githubusercontent.com/419903/40587163-c35cb504-61cb-11e8-95cd-2e973c431340.png)
+
+## Test drive
+
+You can use [postman](https://www.getpostman.com/) to test the application
+
+1. `POST /api/v1/users/token` with the user credentials to get a `JWT` token
+
+![get_token](https://user-images.githubusercontent.com/419903/40587437-33e54824-61cf-11e8-8c3a-62eabff5fb99.png)
+
+2. `GET /api/v1/shifts` with an `Authentication` header to list the shifts
+
+![list_shifts](https://user-images.githubusercontent.com/419903/40587439-364f41d2-61cf-11e8-88cb-defc7380388f.png)
