@@ -16,19 +16,19 @@ This project just uses sqlite as DB so there's no need to install a database ser
 ### Seed data
 
 There are 2 users 
-1. admin
-  - username: admin
-  - email: admin@foo.com
-  - password: somepass
-2. user
-  - username: user
-  - email: user@foo.com
-  - password: somepass
+* admin
+  - **username:** admin
+  - **email:** admin@foo.com
+  - **password:** somepass
+* user
+  - **username:** user
+  - **email:** user@foo.com
+  - **password:** somepass
 
-And there are 6 shifts created for user `user` that total
-1. 7 hours on the week before `1/1/2018`
-2. 40 hours on the week of `1/1/2018`
-3. 1 hour on the week of `7/1/2018`
+And there are **6 shifts** created for user `user` that total
+* 7 hours on the week before `1/1/2018`
+* 40 hours on the week of `1/1/2018`
+* 1 hour on the week of `7/1/2018`
 
 ## Tests
 
