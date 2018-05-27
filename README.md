@@ -63,23 +63,25 @@ A user can be a normal `user` or an `admin`.
 2. Can create new users (including admins)
 3. Can update other users (but not admin status)
 
-## Notes
+## Implementation
 
+### Authentication
 This project creates an API to serve the requested functionality.
 To secure the connection uses JWT tokens.
 ![max hours](https://user-images.githubusercontent.com/419903/40587226-9d180d3e-61cc-11e8-82b5-e6bf3cd02824.png)
 
+### Shifts implementation
 The implementation is quite straighforward but there are a couple of edge cases worthy of note.
 
-### No more than 40 hours a week
+#### No more than 40 hours a week
 
 The difficulty here stems from shifts being able to span more than one day (e.g start sunday at 23.00 PM and end at monday 3.00 AM)
-We need to ensure only the time spend inside the week boundaries counts towards the 40 hours max.
+We need to ensure only the time spent inside the week boundaries counts towards the 40 hours max.
 See image:
 
 ![max hours](https://user-images.githubusercontent.com/419903/40587137-8458391e-61cb-11e8-809e-31d89a919049.png)
 
-### No more than one employee per shift
+#### No more than one employee per shift
 
 We need to ensure there is no overlap in the shifts
 
