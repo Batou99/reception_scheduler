@@ -2,19 +2,34 @@ require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
   setup do
-    @user1  = User.create(username: "user1",  email: "user@foo.com",  admin: false, password: "testpass")
-    @admin1 = User.create(username: "admin1", email: "admin@foo.com", admin: true,  password: "testpass")
+    @user  = User.create(username: "user",  email: "user@foo.com",  admin: false, password: "testpass")
+    @admin = User.create(username: "admin", email: "admin@foo.com", admin: true,  password: "testpass")
+
+    # This is a monday
+    @base        = Time.parse("2018/1/1T00:00:00+00:00")
+    @next_monday = @base.next_occurring(:monday)
+
+    # This shift has 5 hours on prev week and 3 hours on this week
+    Shift.create(user_id: @user.id, start: @base - 5.hour, finish: @base + 3.hour)
+
+    # This shifts have 8 hours on this week
+    1.upto(4) do |num|
+      Shift.create(user_id: @user.id, start: @base + num.day - 7.hour, finish: @base + num.day + 1.hour)
+    end
+
+    # This shift has 5 hours on current week and 3 hour into the next
+    Shift.create(user_id: @user.id, start: @next_monday - 5.hour, finish: @next_monday + 3.hour)
   end
 
   test "user can modify itself" do
-    assert @user1.can_modify_user? @user1.id
+    assert @user.can_modify_user? @user.id
   end
 
   test "non admin user cannot modify other users" do
     user2 = User.create(username: "user2", email: "user@foo.com", admin: false, password: "testpass")
 
-    refute @user1.can_modify_user? @admin1.id
-    refute @user1.can_modify_user? user2.id
+    refute @user.can_modify_user? @admin1.id
+    refute @user.can_modify_user? user2.id
   end
 
   test "admin can modify any other user" do
@@ -22,6 +37,16 @@ class UserTest < ActiveSupport::TestCase
 
     assert @admin1.can_modify_user? @admin1.id
     assert @admin1.can_modify_user? admin2.id
-    assert @admin1.can_modify_user? @user1.id
+    assert @admin1.can_modify_user? @user.id
+  end
+
+  test "#number_of_hours" do
+    # 7 hours of first shift on prev week
+    assert_equal 5,  @user.number_of_hours(@base.prev_occurring(:sunday))
+    # 3 shifts x 8h + 1 hour of first shift
+    assert_equal 40, @user.number_of_hours(@base)
+
+    # 2 hours into the next week
+    assert_equal 3, @user.number_of_hours(@next_monday)
   end
 end
