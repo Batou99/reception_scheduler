@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :authorize,          only: [:update]
 
   def index
-    render json: { status: 200, msg: "Logged in" }
+    return_ok msg: "Logged in"
   end
 
   def current
@@ -16,7 +16,7 @@ class UsersController < ApplicationController
     user = User.new(user_params)
 
     if user.save
-      render json: { status: 200, msg: "User created" }
+      return_ok({ msg: "User created" }, 201)
     end
   end
 
@@ -28,7 +28,7 @@ class UsersController < ApplicationController
     user = User.find(params[:id])
 
     if user.update(filtered_params)
-      render json: { status: 200, msg: "User details updated" }
+      return_ok msg: "User details updated"
     end
   end
 
@@ -36,7 +36,7 @@ class UsersController < ApplicationController
     user = User.find(params[:id])
 
     if user.destroy
-      render json: { status: 200, msg: "User deleted" }
+      return_ok msg: "User deleted"
     end
   end
 

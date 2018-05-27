@@ -3,13 +3,13 @@ class ShiftsController < ApplicationController
   before_action :authorize, only: [:update, :destroy]
 
   def index
-    render json: Shift.order("start ASC"), each_serializer: ShiftSerializer, root: false
+    render json: Shift.order("start ASC"), each_serializer: ShiftSerializer
   end
 
   def show
     shift = Shift.find(params[:id])
 
-    render json: shift, root: false
+    return_ok shift
   end
 
   def create
@@ -17,9 +17,9 @@ class ShiftsController < ApplicationController
     shift.user = current_user
 
     if shift.save
-      render json: { msg: "shift created" }, status: 201
+      return_ok({ msg: "shift created" }, 201)
     else
-      render json: { errors: shift.errors.full_messages }, status: 422
+      return_error shift.errors.full_messages
     end
   end
 
@@ -28,9 +28,9 @@ class ShiftsController < ApplicationController
     shift.update_attributes(shift_params)
 
     if shift.save
-      render json: shift, status: 200
+      return_ok shift
     else
-      render json: { errors: shift.errors.full_messages }, status: 422
+      return_error shift.errors.full_messages
     end
   end
 
@@ -38,7 +38,7 @@ class ShiftsController < ApplicationController
     shift = Shift.find(params[:id])
     shift.destroy
 
-    render json: { msg: "shift deleted sucessfully" }, status: 200
+    return_ok msg: "shift deleted sucessfully"
   end
 
   private

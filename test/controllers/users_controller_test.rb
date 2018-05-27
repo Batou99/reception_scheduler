@@ -55,7 +55,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
     res = JSON.parse response.body, symbolize_names: true
 
-    assert_equal({status: 200, msg: "Logged in"}, res)
+    assert_equal 200, response.status
+    assert_equal({msg: "Logged in"}, res)
   end
 
   test "current: authenticated" do
@@ -74,7 +75,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     user_params = @create_params[:user]
     new_user    = User.last
 
-    assert_equal 200,                    response.status
+    assert_equal 201,                    response.status
     assert_equal user_params[:username], new_user.username
     assert_equal user_params[:email],    new_user.email
     assert_equal user_params[:admin],    new_user.admin
