@@ -6,6 +6,31 @@ Soho House runs several private Membership Clubs around the world. To enter the 
 
 We'd like you to build a basic scheduling system to help manage the rota for the Shoreditch House reception desk. The system should allow Soho House employees to view and book shifts.
 
+## Rules
+- Shoreditch House is open from 7am until 3am, 7 days a week
+- There is only one member of staff on shift at a time
+- Shifts can be a maximum of 8 hours long
+- An employee can work a maximum of 40 hours per week
+
+## Extra rules
+This has been added because I thought they would offer a better experience
+
+### User roles
+A user can be a normal `user` or an `admin`. 
+
+#### A user 
+
+1. Can only update/delete its own shifts.
+2. Cannot create new users
+3. Cannot modify his `admin` status
+4. Can modify his username and email
+
+#### An admin
+
+1. Can update/delete any other users shifts
+2. Can create new users (including admins)
+3. Can update other users (but not admin status)
+
 ## Installation
 
 This project just uses sqlite as DB so there's no need to install a database server like mysql or postgres.
@@ -37,31 +62,6 @@ To run the test suite just do: `rails test`
 ## Run application
 
 Just `rails s`
-
-## Rules
-- Shoreditch House is open from 7am until 3am, 7 days a week
-- There is only one member of staff on shift at a time
-- Shifts can be a maximum of 8 hours long
-- An employee can work a maximum of 40 hours per week
-
-## Extra rules
-This has been added because I thought they would offer a better experience
-
-### User roles
-A user can be a normal `user` or an `admin`. 
-
-#### A user 
-
-1. Can only update/delete its own shifts.
-2. Cannot create new users
-3. Cannot modify his `admin` status
-4. Can modify his username and email
-
-#### An admin
-
-1. Can update/delete any other users shifts
-2. Can create new users (including admins)
-3. Can update other users (but not admin status)
 
 ## Implementation
 
