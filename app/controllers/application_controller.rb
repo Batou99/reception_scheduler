@@ -5,11 +5,11 @@ class ApplicationController < ActionController::API
     render status: :unauthorized
   end
 
-  def return_ok(data, status_code = 200)
+  def render_ok(data, status_code = 200)
     render json: data, status: status_code
   end
 
-  def return_error(data, status_code = 422)
+  def render_error(data, status_code = 422)
     render json: { errors: data }, status: status_code
   end
 

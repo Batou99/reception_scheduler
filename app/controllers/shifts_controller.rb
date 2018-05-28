@@ -9,7 +9,7 @@ class ShiftsController < ApplicationController
   def show
     shift = Shift.find(params[:id])
 
-    return_ok shift
+    render_ok shift
   end
 
   def create
@@ -17,9 +17,9 @@ class ShiftsController < ApplicationController
     shift.user = current_user
 
     if shift.save
-      return_ok({ msg: "shift created" }, 201)
+      render_ok({ msg: "shift created" }, 201)
     else
-      return_error shift.errors.full_messages
+      render_error shift.errors.full_messages
     end
   end
 
@@ -28,9 +28,9 @@ class ShiftsController < ApplicationController
     shift.update_attributes(shift_params)
 
     if shift.save
-      return_ok shift
+      render_ok shift
     else
-      return_error shift.errors.full_messages
+      render_error shift.errors.full_messages
     end
   end
 
@@ -38,7 +38,7 @@ class ShiftsController < ApplicationController
     shift = Shift.find(params[:id])
     shift.destroy
 
-    return_ok msg: "shift deleted sucessfully"
+    render_ok msg: "shift deleted sucessfully"
   end
 
   private
