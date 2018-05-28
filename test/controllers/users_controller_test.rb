@@ -82,7 +82,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create: normal user" do
-    post users_path, as: :json, params: @create_params
+    post users_path, as: :json, params: @create_params, headers: authenticated_header(@user)
 
     assert_equal 401, response.status
   end

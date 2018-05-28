@@ -148,5 +148,4 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 200, response.status
     assert_equal({ msg: "shift deleted sucessfully" }, res)
   end
-
 end
